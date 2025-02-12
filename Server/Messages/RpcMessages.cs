@@ -1,24 +1,13 @@
+using System.Text.Json.Serialization;
 using Microsoft.VisualBasic;
 
 namespace OPP.Rpc.Messages;
 
 public class RpcRequest
 {
-    public static RpcRequest From(ulong inSeq, string inMethod, Dictionary<string, object> Paramter)
-    {
-        var outReq = new RpcRequest()
-        {
-            Seq = inSeq,
-            Method = inMethod,
-            Paramter = Paramter
-        };
-        return outReq;
-    }
-
-
     public ulong Seq { get; set; } = 0;
     public string Method { get; set; } = string.Empty;
-    public object? Paramter { get; set; } = null;
+    public object? Payload { get; set; } = null;
 }
 
 public class RpcError

@@ -1,8 +1,12 @@
+using System.Text.Json;
 using OPP.Rpc.Messages;
 
 namespace OPP.Framework;
 
 public class RpcHandler<SVC, REQ, RES> : IRpcHandler
+    where SVC : class
+    where REQ : class, new()
+    where RES : class, new()
 {
     public delegate RES OnInvokeDelegate(SVC svc, REQ req);
 
@@ -19,8 +23,20 @@ public class RpcHandler<SVC, REQ, RES> : IRpcHandler
         {
             return RpcResponse.From(req).BindError("NOT_FOUND_SERVICE", () => new { typeof(SVC).Name });
         }
+        
+        var payload = req.Payload;
+        if (payload == null)
+        {
+            payload = "{}";
+        }
 
-        var res = OnInvoke(svc, (REQ)req.Paramter!);
+        var reqDeserialized = JsonSerializer.Deserialize<REQ>(payload.ToString()!);
+        if (reqDeserialized == null)
+        {
+            reqDeserialized = new REQ();
+        }
+        
+        var res = OnInvoke(svc, reqDeserialized);
         return RpcResponse.From(req).AddPayload(res!);
     }
 

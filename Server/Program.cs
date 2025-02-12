@@ -14,6 +14,6 @@ builder.InitializeRpc([
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.MapPostRpc("/rpc");
 
 app.Run();
