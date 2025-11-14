@@ -13,88 +13,110 @@ namespace OPP.Core.Actor
             _onLeft.AddListener(() => { });
             _onRight.AddListener(() => { });
             _onBackward.AddListener(() => { });
+            _onUpdate.AddListener(() => { });
         }
 
-        public void AddForwardEvent(UnityAction onForward)
+        public void RegietserOnMovementEvent(
+            UnityAction onForward, UnityAction onLeft,
+            UnityAction onRight, UnityAction onBackward)
         {
             _onForward.AddListener(onForward);
-        }
-        public void AddLeftEvent(UnityAction onLeft)
-        {
             _onLeft.AddListener(onLeft);
-        }
-        public void AddRightEvent(UnityAction onRight)
-        {
             _onRight.AddListener(onRight);
-        }
-        public void AddBackwardEvent(UnityAction onBackward)
-        {
             _onBackward.AddListener(onBackward);
         }
 
-        public void RemoveForwardEvent(UnityAction onForward)
+        public void UnregisterOnMovementEvent(
+            UnityAction onForward, UnityAction onLeft,
+            UnityAction onRight, UnityAction onBackward)
         {
             _onForward.RemoveListener(onForward);
-        }
-        public void RemoveLeftEvent(UnityAction onLeft)
-        {
             _onLeft.RemoveListener(onLeft);
-        }
-        public void RemoveRightEvent(UnityAction onRight)
-        {
             _onRight.RemoveListener(onRight);
-        }
-        public void RemoveBackwardEvent(UnityAction onBackward)
-        {
             _onBackward.RemoveListener(onBackward);
         }
 
-        public void RemoveAllForwardEvents()
+        public void RegietserOffMovementEvent(
+            UnityAction offForward, UnityAction offLeft,
+            UnityAction offRight, UnityAction offBackward)
         {
-            _onForward.RemoveAllListeners();
-        }
-        public void RemoveAllLeftEvents()
-        {
-            _onLeft.RemoveAllListeners();
-        }
-        public void RemoveAllRightEvents()
-        {
-            _onRight.RemoveAllListeners();
-        }
-        public void RemoveAllBackwardEvents()
-        {
-            _onBackward.RemoveAllListeners();
+            _offForward.AddListener(offForward);
+            _offLeft.AddListener(offLeft);
+            _offRight.AddListener(offRight);
+            _offBackward.AddListener(offBackward);
         }
 
-        public void Update()
+        public void UnregisterOffMovementEvent(
+            UnityAction offForward, UnityAction offLeft,
+            UnityAction offRight, UnityAction offBackward)
         {
-
+            _offForward.RemoveListener(offForward);
+            _offLeft.RemoveListener(offLeft);
+            _offRight.RemoveListener(offRight);
+            _offBackward.RemoveListener(offBackward);
         }
 
+        public void RegisterUpdateEvent(UnityAction onUpdate) => _onUpdate.AddListener(onUpdate);
+        public void UnregisterUpdateEvent(UnityAction onUpdate) => _onUpdate.RemoveListener(onUpdate);
+
+        // TODO: 콘피그 받아야함
         private void OnInput()
         {
-            if (true) // TODO: 입력키로 바꿔야함
+            if (Input.GetKeyDown(KeyCode.W))
             {
                 _onForward.Invoke();
             }
-            if (true) // TODO: 입력키로 바꿔야함
+            if (Input.GetKeyDown(KeyCode.S))
             {
                 _onLeft.Invoke();
             }
-            if (true) // TODO: 입력키로 바꿔야함
+            if (Input.GetKeyDown(KeyCode.A))
             {
                 _onRight.Invoke();
             }
-            if (true) // TODO: 입력키로 바꿔야함
+            if (Input.GetKeyDown(KeyCode.D))
             {
                 _onBackward.Invoke();
             }
+
+            if (Input.GetKeyUp(KeyCode.W))
+            {
+                _offForward.Invoke();
+            }
+            if (Input.GetKeyUp(KeyCode.S))
+            {
+                _offLeft.Invoke();
+            }
+            if (Input.GetKeyUp(KeyCode.A))
+            {
+                _offRight.Invoke();
+            }
+            if (Input.GetKeyUp(KeyCode.D))
+            {
+                _offBackward.Invoke();
+            }
         }
 
+        private void Update()
+        {
+            if (Input.anyKey)
+            {
+                OnInput();
+            }
 
-        private UnityEvent _onForward;
-        private UnityEvent _onLeft;
-        private UnityEvent _onRight;
-        private UnityEvent _onBackward;
+            _onUpdate.Invoke();
+        }
+
+        readonly private UnityEvent _onForward = new();
+        readonly private UnityEvent _onLeft = new();
+        readonly private UnityEvent _onRight = new();
+        readonly private UnityEvent _onBackward = new();
+
+        readonly private UnityEvent _offForward = new();
+        readonly private UnityEvent _offLeft = new();
+        readonly private UnityEvent _offRight = new();
+        readonly private UnityEvent _offBackward = new();
+
+        readonly private UnityEvent _onUpdate = new();
     }
 }
